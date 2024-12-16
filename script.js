@@ -1,6 +1,10 @@
 let timerElement = document.getElementById("timer");
 let timesList = document.getElementById("times");
 let scrambleElement = document.getElementById("scramble");
+let bestSingleElement = document.getElementById("bestSingle");
+let bestAo5Element = document.getElementById("bestAo5");
+let bestAo12Element = document.getElementById("bestAo12");
+let bestAo100Element = document.getElementById("bestAo100");
 
 let startTime = null;
 let elapsedTime = 0;
@@ -37,7 +41,7 @@ function startTimer() {
   elapsedTime = 0; // Reset elapsed time when starting
   timerInterval = setInterval(() => {
     elapsedTime = Date.now() - startTime;
-    timerElement.textContent = (elapsedTime / 1000).toFixed(2);
+    timerElement.textContent = formatTime(elapsedTime);
   }, 10); // Update every 10ms for smoother display
 }
 
@@ -54,16 +58,53 @@ function saveTime(time) {
   times.push(solve);
   localStorage.setItem("times", JSON.stringify(times));
   renderTimes();
+  updateStatistics(); // Update stats (best single, Ao5, Ao12) after saving the time
 }
 
 function renderTimes() {
   timesList.innerHTML = "";
   times.forEach((solve, index) => {
     const li = document.createElement("li");
-    li.textContent = `${solve.time} ${solve.status}`;
+    li.textContent = formatTimeDisplay(solve.time) + " " + solve.status;
     li.addEventListener("click", () => editTime(index));
     timesList.appendChild(li);
   });
+}
+
+function updateStatistics() {
+  const sortedTimes = times.map((solve) => parseFloat(solve.time)).sort((a, b) => a - b);
+
+  // Update best single
+  const bestSingle = sortedTimes[0];
+  bestSingleElement.textContent = `Best Single: ${formatTime(bestSingle)}`;
+
+  // Calculate and update best Ao5
+  const ao5 = calculateAverage(sortedTimes.slice(0, 5));
+  bestAo5Element.textContent = `Best Ao5: ${formatTime(ao5)}`;
+
+  // Calculate and update best Ao12
+  const ao12 = calculateAverage(sortedTimes.slice(0, 12));
+  bestAo12Element.textContent = `Best Ao12: ${formatTime(ao12)}`;
+
+  // Calculate and update best Ao100 (if there are 100 solves)
+  const ao100 = calculateAverage(sortedTimes.slice(0, 100));
+  bestAo100Element.textContent = `Best Ao100: ${formatTime(ao100)}`;
+}
+
+function calculateAverage(timesArray) {
+  if (timesArray.length === 0) return 0; // Return 0 if no times
+
+  const sum = timesArray.reduce((acc, time) => acc + time, 0);
+  return sum / timesArray.length;
+}
+
+function formatTime(ms) {
+  return (ms / 1000).toFixed(2); // Format time to 2 decimal places
+}
+
+function formatTimeDisplay(time) {
+  // Remove any unnecessary prefixes or formatting for display
+  return parseFloat(time).toFixed(2); // Ensure only normal time is displayed
 }
 
 function editTime(index) {
@@ -83,10 +124,7 @@ function editTime(index) {
 
   localStorage.setItem("times", JSON.stringify(times));
   renderTimes();
-}
-
-function resetTimerAppearance() {
-  timerElement.style.color = "#ffffff"; // Reset to default color
+  updateStatistics(); // Recalculate statistics after editing a time
 }
 
 document.addEventListener("keydown", (e) => {
@@ -138,6 +176,11 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+function resetTimerAppearance() {
+  timerElement.style.color = "#ffffff"; // Reset to default color
+}
+
 // Initialize
 displayScramble();
 renderTimes();
+updateStatistics(); // Initialize stats on page load
