@@ -1,14 +1,15 @@
-// Timer and scramble variables
-let scrambleElement = document.getElementById("scramble");
 let timerElement = document.getElementById("timer");
 let timesList = document.getElementById("times");
+let scrambleElement = document.getElementById("scramble");
 
-let running = false;
-let startTime = 0;
+let startTime = null;
 let elapsedTime = 0;
+let running = false;
+let holdStartTime = null;
+let isReady = false;
 let times = JSON.parse(localStorage.getItem("times")) || [];
+let timerInterval = null;
 
-// Generate a scramble
 function generateScramble() {
   const moves = ["R", "L", "U", "D", "F", "B"];
   const suffixes = ["", "'", "2"];
@@ -31,7 +32,30 @@ function displayScramble() {
   scrambleElement.textContent = generateScramble();
 }
 
-// Render times on the list
+function startTimer() {
+  startTime = Date.now();
+  elapsedTime = 0; // Reset elapsed time
+  timerInterval = setInterval(() => {
+    elapsedTime = Date.now() - startTime;
+    timerElement.textContent = (elapsedTime / 1000).toFixed(2);
+  }, 10);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  elapsedTime = Date.now() - startTime;
+  const time = (elapsedTime / 1000).toFixed(2);
+  saveTime(time);
+}
+
+function saveTime(time) {
+  const scramble = scrambleElement.textContent;
+  const solve = { time, scramble, status: "" };
+  times.push(solve);
+  localStorage.setItem("times", JSON.stringify(times));
+  renderTimes();
+}
+
 function renderTimes() {
   timesList.innerHTML = "";
   times.forEach((solve, index) => {
@@ -42,7 +66,6 @@ function renderTimes() {
   });
 }
 
-// Edit a specific solve
 function editTime(index) {
   const solve = times[index];
   const action = prompt(
@@ -62,64 +85,49 @@ function editTime(index) {
   renderTimes();
 }
 
-// Timer start/stop logic
-function startStopTimer() {
-  if (running) {
-    // Stop timer
-    running = false;
-    elapsedTime = Date.now() - startTime;
-    const time = (elapsedTime / 1000).toFixed(2);
-    saveTime(time);
-    displayScramble();
-  } else {
-    // Start timer
-    running = true;
-    startTime = Date.now();
-    timerElement.textContent = "0.00";
+function resetTimerAppearance() {
+  timerElement.style.color = "#ffffff"; // Reset to default color
+}
+
+document.addEventListener("touchstart", (e) => {
+  if (!running && !holdStartTime) {
+    holdStartTime = Date.now();
   }
-}
+});
 
-// Save the current time
-function saveTime(time) {
-  const scramble = scrambleElement.textContent;
-  const solve = { time, scramble, status: "" };
-  times.push(solve);
-  localStorage.setItem("times", JSON.stringify(times));
-  renderTimes();
-}
+document.addEventListener("touchend", (e) => {
+  if (!running) {
+    const holdDuration = Date.now() - holdStartTime;
+    holdStartTime = null;
 
-// Timer rendering logic
-function updateTimer() {
-  if (running) {
-    const currentTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    timerElement.textContent = currentTime;
-    requestAnimationFrame(updateTimer);
-  }
-}
-
-// Event listeners
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    e.preventDefault();
-    if (!running) {
-      timerElement.style.color = "green"; // Ready state
-      setTimeout(() => {
-        timerElement.style.color = "white";
-        if (!running && e.repeat === false) {
-          startStopTimer();
-          updateTimer();
-        }
-      }, 300);
+    if (isReady && holdDuration >= 300) {
+      // Start the timer
+      running = true;
+      isReady = false;
+      timerElement.textContent = "0.00"; // Reset only when starting
+      startTimer();
+      timerElement.style.color = "#ffffff"; // Reset color
+    } else {
+      resetTimerAppearance();
     }
+  } else {
+    // Stop the timer
+    running = false;
+    stopTimer();
+    displayScramble();
   }
 });
 
-document.addEventListener("keyup", (e) => {
-  if (e.code === "Space" && running) {
-    startStopTimer();
+document.addEventListener("touchstart", (e) => {
+  const holdDuration = Date.now() - holdStartTime;
+
+  if (!running && holdDuration >= 300) {
+    // Ready to start
+    isReady = true;
+    timerElement.style.color = "#00ff00"; // Green color when ready
   }
 });
 
-// Initialize the app
+// Initialize
 displayScramble();
 renderTimes();
