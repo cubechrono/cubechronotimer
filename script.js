@@ -1,64 +1,78 @@
-let timerElement = document.getElementById("timer");
-let timesList = document.getElementById("times");
-let scrambleElement = document.getElementById("scramble");
+let sections = JSON.parse(localStorage.getItem("sections")) || { Default: [] };
+let currentSection = "Default";
 
-let startTime = null;
-let elapsedTime = 0;
-let running = false;
-let holdStartTime = null;
-let isReady = false;
-let times = JSON.parse(localStorage.getItem("times")) || [];
-let timerInterval = null;
+const sectionsDropdown = document.getElementById("sections");
+const addSectionButton = document.getElementById("add-section");
+const renameSectionButton = document.getElementById("rename-section");
+const deleteSectionButton = document.getElementById("delete-section");
 
-function generateScramble() {
-  const moves = ["R", "L", "U", "D", "F", "B"];
-  const suffixes = ["", "'", "2"];
-  let scramble = [];
-  let lastMove = "";
+function updateSectionsDropdown() {
+  sectionsDropdown.innerHTML = "";
+  for (let sectionName in sections) {
+    const option = document.createElement("option");
+    option.value = sectionName;
+    option.textContent = sectionName;
+    if (sectionName === currentSection) {
+      option.selected = true;
+    }
+    sectionsDropdown.appendChild(option);
+  }
+}
 
-  for (let i = 0; i < 20; i++) {
-    let move;
-    do {
-      move = moves[Math.floor(Math.random() * moves.length)];
-    } while (move === lastMove);
-    lastMove = move;
-    scramble.push(move + suffixes[Math.floor(Math.random() * suffixes.length)]);
+function switchSection(newSection) {
+  currentSection = newSection;
+  renderTimes(); // Update the times list for the selected section
+  displayScramble(); // Reset scramble
+}
+
+function addSection() {
+  const newSectionName = `Section ${Object.keys(sections).length + 1}`;
+  sections[newSectionName] = [];
+  localStorage.setItem("sections", JSON.stringify(sections));
+  updateSectionsDropdown();
+  switchSection(newSectionName);
+}
+
+function renameSection() {
+  const newName = prompt("Enter new section name:", currentSection);
+  if (newName && !sections[newName]) {
+    sections[newName] = sections[currentSection];
+    delete sections[currentSection];
+    currentSection = newName;
+    localStorage.setItem("sections", JSON.stringify(sections));
+    updateSectionsDropdown();
+  } else if (sections[newName]) {
+    alert("A section with this name already exists.");
+  }
+}
+
+function deleteSection() {
+  if (Object.keys(sections).length === 1) {
+    alert("You must have at least one section.");
+    return;
   }
 
-  return scramble.join(" ");
-}
-
-function displayScramble() {
-  scrambleElement.textContent = generateScramble();
-}
-
-function startTimer() {
-  startTime = Date.now();
-  elapsedTime = 0; // Reset elapsed time
-  timerInterval = setInterval(() => {
-    elapsedTime = Date.now() - startTime;
-    timerElement.textContent = (elapsedTime / 1000).toFixed(2);
-  }, 10);
-}
-
-function stopTimer() {
-  clearInterval(timerInterval);
-  elapsedTime = Date.now() - startTime;
-  const time = (elapsedTime / 1000).toFixed(2);
-  saveTime(time);
+  if (confirm(`Are you sure you want to delete "${currentSection}"?`)) {
+    delete sections[currentSection];
+    currentSection = Object.keys(sections)[0];
+    localStorage.setItem("sections", JSON.stringify(sections));
+    updateSectionsDropdown();
+    renderTimes();
+  }
 }
 
 function saveTime(time) {
   const scramble = scrambleElement.textContent;
   const solve = { time, scramble, status: "" };
-  times.push(solve);
-  localStorage.setItem("times", JSON.stringify(times));
+  sections[currentSection].push(solve);
+  localStorage.setItem("sections", JSON.stringify(sections));
   renderTimes();
 }
 
 function renderTimes() {
   timesList.innerHTML = "";
-  times.forEach((solve, index) => {
+  const solves = sections[currentSection] || [];
+  solves.forEach((solve, index) => {
     const li = document.createElement("li");
     li.textContent = `${solve.time} ${solve.status}`;
     li.addEventListener("click", () => editTime(index));
@@ -66,68 +80,12 @@ function renderTimes() {
   });
 }
 
-function editTime(index) {
-  const solve = times[index];
-  const action = prompt(
-    `Time: ${solve.time}\nScramble: ${solve.scramble}\nStatus: ${solve.status || "None"}\n\nEnter:\n+2 to add 2 seconds\nDNF to mark as Did Not Finish\ndelete to remove`
-  );
-
-  if (action === "+2") {
-    solve.time = (parseFloat(solve.time) + 2).toFixed(2);
-    solve.status = "+2";
-  } else if (action === "DNF") {
-    solve.status = "DNF";
-  } else if (action === "delete") {
-    times.splice(index, 1);
-  }
-
-  localStorage.setItem("times", JSON.stringify(times));
-  renderTimes();
-}
-
-function resetTimerAppearance() {
-  timerElement.style.color = "#ffffff"; // Reset to default color
-}
-
-document.addEventListener("touchstart", (e) => {
-  if (!running && !holdStartTime) {
-    holdStartTime = Date.now();
-  }
-});
-
-document.addEventListener("touchend", (e) => {
-  if (!running) {
-    const holdDuration = Date.now() - holdStartTime;
-    holdStartTime = null;
-
-    if (isReady && holdDuration >= 300) {
-      // Start the timer
-      running = true;
-      isReady = false;
-      timerElement.textContent = "0.00"; // Reset only when starting
-      startTimer();
-      timerElement.style.color = "#ffffff"; // Reset color
-    } else {
-      resetTimerAppearance();
-    }
-  } else {
-    // Stop the timer
-    running = false;
-    stopTimer();
-    displayScramble();
-  }
-});
-
-document.addEventListener("touchstart", (e) => {
-  const holdDuration = Date.now() - holdStartTime;
-
-  if (!running && holdDuration >= 300) {
-    // Ready to start
-    isReady = true;
-    timerElement.style.color = "#00ff00"; // Green color when ready
-  }
-});
+// Event Listeners for Section Actions
+addSectionButton.addEventListener("click", addSection);
+renameSectionButton.addEventListener("click", renameSection);
+deleteSectionButton.addEventListener("click", deleteSection);
+sectionsDropdown.addEventListener("change", (e) => switchSection(e.target.value));
 
 // Initialize
-displayScramble();
-renderTimes();
+updateSectionsDropdown();
+switchSection(currentSection);
