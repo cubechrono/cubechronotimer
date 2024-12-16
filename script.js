@@ -1,14 +1,15 @@
-// Timer and scramble variables
-let scrambleElement = document.getElementById("scramble");
 let timerElement = document.getElementById("timer");
 let timesList = document.getElementById("times");
+let scrambleElement = document.getElementById("scramble");
 
+let startTime, elapsedTime = 0;
 let running = false;
-let startTime = 0;
-let elapsedTime = 0;
-let times = JSON.parse(localStorage.getItem("times")) || [];
+let waiting = false;
+let times = JSON.parse(localStorage.getItem("times")) || []; // Load times from localStorage
 
-// Generate a scramble
+let spacePressTime = null; // Variable to store the time when space is pressed
+let holdingSpace = false; // Flag to check if spacebar is held
+
 function generateScramble() {
   const moves = ["R", "L", "U", "D", "F", "B"];
   const suffixes = ["", "'", "2"];
@@ -31,7 +32,33 @@ function displayScramble() {
   scrambleElement.textContent = generateScramble();
 }
 
-// Render times on the list
+function startStopTimer() {
+  if (running) {
+    // Stop timer
+    running = false;
+    elapsedTime = Date.now() - startTime;
+    const time = (elapsedTime / 1000).toFixed(2);
+    saveTime(time);
+    displayScramble();
+    resetTimer();
+  } else if (waiting) {
+    // Timer hasn't started yet, so ignore the stop
+  } else {
+    // Start timer
+    running = true;
+    startTime = Date.now();
+    timerElement.textContent = "0.00";
+  }
+}
+
+function saveTime(time) {
+  const scramble = scrambleElement.textContent;
+  const solve = { time, scramble, status: "" };
+  times.push(solve);
+  localStorage.setItem("times", JSON.stringify(times));
+  renderTimes();
+}
+
 function renderTimes() {
   timesList.innerHTML = "";
   times.forEach((solve, index) => {
@@ -42,7 +69,6 @@ function renderTimes() {
   });
 }
 
-// Edit a specific solve
 function editTime(index) {
   const solve = times[index];
   const action = prompt(
@@ -62,64 +88,39 @@ function editTime(index) {
   renderTimes();
 }
 
-// Timer start/stop logic
-function startStopTimer() {
-  if (running) {
-    // Stop timer
-    running = false;
-    elapsedTime = Date.now() - startTime;
-    const time = (elapsedTime / 1000).toFixed(2);
-    saveTime(time);
-    displayScramble();
-  } else {
-    // Start timer
-    running = true;
-    startTime = Date.now();
-    timerElement.textContent = "0.00";
+// Reset Timer and Color
+function resetTimer() {
+  timerElement.textContent = "0.00";
+  timerElement.style.color = "white";
+  holdingSpace = false;
+  waiting = false;
+}
+
+function holdSpace(e) {
+  if (e.code === "Space" && !waiting) {
+    spacePressTime = Date.now();
+    holdingSpace = true;
+    timerElement.style.color = "green"; // Change timer color to green
   }
 }
 
-// Save the current time
-function saveTime(time) {
-  const scramble = scrambleElement.textContent;
-  const solve = { time, scramble, status: "" };
-  times.push(solve);
-  localStorage.setItem("times", JSON.stringify(times));
-  renderTimes();
-}
-
-// Timer rendering logic
-function updateTimer() {
-  if (running) {
-    const currentTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    timerElement.textContent = currentTime;
-    requestAnimationFrame(updateTimer);
-  }
-}
-
-// Event listeners
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    e.preventDefault();
-    if (!running) {
-      timerElement.style.color = "green"; // Ready state
-      setTimeout(() => {
-        timerElement.style.color = "white";
-        if (!running && e.repeat === false) {
-          startStopTimer();
-          updateTimer();
-        }
-      }, 300);
+function releaseSpace(e) {
+  if (e.code === "Space" && holdingSpace) {
+    const holdDuration = (Date.now() - spacePressTime) / 1000;
+    if (holdDuration >= 0.3) {
+      waiting = false;
+      startStopTimer();
+    } else {
+      resetTimer();
     }
+    holdingSpace = false;
   }
-});
+}
 
-document.addEventListener("keyup", (e) => {
-  if (e.code === "Space" && running) {
-    startStopTimer();
-  }
-});
+// Event listeners for spacebar press and release
+document.addEventListener("keydown", holdSpace);
+document.addEventListener("keyup", releaseSpace);
 
-// Initialize the app
+// Initialize
 displayScramble();
 renderTimes();
