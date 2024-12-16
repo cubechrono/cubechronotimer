@@ -41,6 +41,7 @@ function startStopTimer() {
     saveTime(time);
     displayScramble();
     timerElement.textContent = time; // Show the final time on the timer
+    timerElement.style.color = "white"; // Reset the timer color after stopping
   } else {
     // Start the timer
     running = true;
