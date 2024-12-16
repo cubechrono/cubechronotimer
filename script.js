@@ -5,6 +5,13 @@ const sectionsDropdown = document.getElementById("sections");
 const addSectionButton = document.getElementById("add-section");
 const renameSectionButton = document.getElementById("rename-section");
 const deleteSectionButton = document.getElementById("delete-section");
+const timerElement = document.getElementById("timer");
+const timesList = document.getElementById("times");
+const scrambleElement = document.getElementById("scramble");
+
+let startTime, elapsedTime = 0;
+let running = false;
+let ready = false;
 
 function updateSectionsDropdown() {
   sectionsDropdown.innerHTML = "";
@@ -21,8 +28,8 @@ function updateSectionsDropdown() {
 
 function switchSection(newSection) {
   currentSection = newSection;
-  renderTimes(); // Update the times list for the selected section
-  displayScramble(); // Reset scramble
+  renderTimes();
+  displayScramble();
 }
 
 function addSection() {
@@ -80,7 +87,86 @@ function renderTimes() {
   });
 }
 
-// Event Listeners for Section Actions
+function editTime(index) {
+  const solve = sections[currentSection][index];
+  const action = prompt(
+    `Time: ${solve.time}\nScramble: ${solve.scramble}\nStatus: ${solve.status || "None"}\n\nEnter:\n+2 to add 2 seconds\nDNF to mark as Did Not Finish\ndelete to remove`
+  );
+
+  if (action === "+2") {
+    solve.time = (parseFloat(solve.time) + 2).toFixed(2);
+    solve.status = "+2";
+  } else if (action === "DNF") {
+    solve.status = "DNF";
+  } else if (action === "delete") {
+    sections[currentSection].splice(index, 1);
+  }
+
+  localStorage.setItem("sections", JSON.stringify(sections));
+  renderTimes();
+}
+
+function generateScramble() {
+  const moves = ["R", "L", "U", "D", "F", "B"];
+  const suffixes = ["", "'", "2"];
+  let scramble = [];
+  let lastMove = "";
+
+  for (let i = 0; i < 20; i++) {
+    let move;
+    do {
+      move = moves[Math.floor(Math.random() * moves.length)];
+    } while (move === lastMove);
+    lastMove = move;
+    scramble.push(move + suffixes[Math.floor(Math.random() * suffixes.length)]);
+  }
+
+  return scramble.join(" ");
+}
+
+function displayScramble() {
+  scrambleElement.textContent = generateScramble();
+}
+
+function startStopTimer() {
+  if (running) {
+    running = false;
+    elapsedTime = Date.now() - startTime;
+    const time = (elapsedTime / 1000).toFixed(2);
+    timerElement.textContent = time;
+    saveTime(time);
+  } else {
+    if (!ready) return;
+    running = true;
+    ready = false;
+    startTime = Date.now();
+    timerElement.textContent = "0.00";
+  }
+}
+
+function handleKeyDown(e) {
+  if (e.code === "Space") {
+    e.preventDefault();
+    if (!running) {
+      timerElement.style.color = "green";
+      ready = true;
+    }
+  }
+}
+
+function handleKeyUp(e) {
+  if (e.code === "Space") {
+    e.preventDefault();
+    if (ready) {
+      timerElement.style.color = "#ffffff";
+      startStopTimer();
+    }
+  }
+}
+
+// Event Listeners
+document.addEventListener("keydown", handleKeyDown);
+document.addEventListener("keyup", handleKeyUp);
 addSectionButton.addEventListener("click", addSection);
 renameSectionButton.addEventListener("click", renameSection);
 deleteSectionButton.addEventListener("click", deleteSection);
@@ -89,3 +175,4 @@ sectionsDropdown.addEventListener("change", (e) => switchSection(e.target.value)
 // Initialize
 updateSectionsDropdown();
 switchSection(currentSection);
+displayScramble();
