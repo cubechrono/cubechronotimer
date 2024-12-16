@@ -1,3 +1,4 @@
+/* General Styles */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -13,65 +14,49 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  width: 90%;
-  max-width: 1200px;
-  height: 100%;
-}
-
-.sections-panel {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-.sections-dropdown {
-  flex: 1;
-  margin-right: 10px;
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
-}
-
-.sections-actions button {
-  padding: 8px 12px;
-  margin-right: 5px;
-  border: none;
-  background-color: #444;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.sections-actions button:hover {
-  background-color: #555;
-}
-
+/* Main Section */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-#scramble {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
   text-align: center;
 }
 
-#timer {
-  font-size: 5rem;
-  margin: 20px 0;
-  color: white;
+#scramble {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  text-align: center;
+  word-wrap: break-word; /* Ensure scramble text wraps on small screens */
 }
 
+#timer {
+  font-size: 4rem;
+  margin: 20px 0;
+  color: #ffffff;
+  transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+/* Times List Section */
 .times-list {
-  height: 200px;
+  width: 100%;
+  max-height: 50%;
   background-color: #1e1e1e;
   overflow-y: auto;
-  margin-top: 20px;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 #times {
@@ -84,28 +69,36 @@ body {
   padding: 10px;
   border-bottom: 1px solid #444;
   cursor: pointer;
+  text-align: center;
 }
 
 #times li:hover {
   background-color: #333;
 }
 
-/* Mobile Styles */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
+  body {
+    height: auto; /* Allow scrolling if needed on smaller screens */
+  }
+
   .container {
-    flex-direction: column;
+    padding: 10px;
   }
 
-  .main {
-    margin-top: 20px;
-  }
-
-  .sections-panel,
-  .times-list {
-    width: 100%;
+  #scramble {
+    font-size: 1rem; /* Smaller scramble text for mobile */
   }
 
   #timer {
-    font-size: 3.5rem;
+    font-size: 3rem; /* Adjust timer size for mobile */
+  }
+
+  .times-list {
+    max-height: 40%; /* Reduce times list height on mobile */
+  }
+
+  #times li {
+    font-size: 0.9rem; /* Slightly smaller text for times list */
   }
 }
