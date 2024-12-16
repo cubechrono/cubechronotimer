@@ -34,11 +34,11 @@ function displayScramble() {
 
 function startTimer() {
   startTime = Date.now();
-  elapsedTime = 0; // Reset elapsed time when starting
+  elapsedTime = 0; // Reset elapsed time
   timerInterval = setInterval(() => {
     elapsedTime = Date.now() - startTime;
     timerElement.textContent = (elapsedTime / 1000).toFixed(2);
-  }, 10); // Update every 10ms for smoother display
+  }, 10);
 }
 
 function stopTimer() {
@@ -89,52 +89,42 @@ function resetTimerAppearance() {
   timerElement.style.color = "#ffffff"; // Reset to default color
 }
 
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    e.preventDefault();
-
-    if (!running && !holdStartTime) {
-      holdStartTime = Date.now();
-    }
+document.addEventListener("touchstart", (e) => {
+  if (!running && !holdStartTime) {
+    holdStartTime = Date.now();
   }
 });
 
-document.addEventListener("keyup", (e) => {
-  if (e.code === "Space") {
-    e.preventDefault();
-
-    if (!running) {
-      const holdDuration = Date.now() - holdStartTime;
-      holdStartTime = null;
-
-      if (isReady && holdDuration >= 300) {
-        // Start the timer
-        running = true;
-        isReady = false;
-        timerElement.textContent = "0.00"; // Reset only when starting
-        startTimer();
-        timerElement.style.color = "#ffffff"; // Reset color
-      } else {
-        resetTimerAppearance();
-      }
-    } else {
-      // Stop the timer
-      running = false;
-      stopTimer();
-      displayScramble();
-    }
-  }
-});
-
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
+document.addEventListener("touchend", (e) => {
+  if (!running) {
     const holdDuration = Date.now() - holdStartTime;
+    holdStartTime = null;
 
-    if (!running && holdDuration >= 300) {
-      // Ready to start
-      isReady = true;
-      timerElement.style.color = "#00ff00"; // Green color when ready
+    if (isReady && holdDuration >= 300) {
+      // Start the timer
+      running = true;
+      isReady = false;
+      timerElement.textContent = "0.00"; // Reset only when starting
+      startTimer();
+      timerElement.style.color = "#ffffff"; // Reset color
+    } else {
+      resetTimerAppearance();
     }
+  } else {
+    // Stop the timer
+    running = false;
+    stopTimer();
+    displayScramble();
+  }
+});
+
+document.addEventListener("touchstart", (e) => {
+  const holdDuration = Date.now() - holdStartTime;
+
+  if (!running && holdDuration >= 300) {
+    // Ready to start
+    isReady = true;
+    timerElement.style.color = "#00ff00"; // Green color when ready
   }
 });
 
