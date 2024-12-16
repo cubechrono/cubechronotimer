@@ -1,104 +1,33 @@
-/* General Styles */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #282c34;
-  color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.container {
+.sections-panel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 600px;
-  height: 100%;
-  padding: 10px;
-  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
-/* Main Section */
-.main {
-  flex: 1;
+.sections-dropdown {
+  width: 150px;
+  padding: 5px;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.sections-actions {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  gap: 5px;
 }
 
-#scramble {
-  font-size: 1.2rem;
-  margin-bottom: 15px;
-  padding: 0 10px;
-  text-align: center;
-  word-wrap: break-word; /* Ensure scramble text wraps on small screens */
-}
-
-#timer {
-  font-size: 4rem;
-  margin: 20px 0;
-  color: #ffffff;
-  transition: color 0.3s ease; /* Smooth transition for color change */
-}
-
-/* Times List Section */
-.times-list {
-  width: 100%;
-  max-height: 50%;
-  background-color: #1e1e1e;
-  overflow-y: auto;
-  margin-top: 10px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-#times {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#times li {
-  padding: 10px;
-  border-bottom: 1px solid #444;
+.sections-actions button {
+  padding: 5px 10px;
+  font-size: 0.9rem;
   cursor: pointer;
-  text-align: center;
+  background-color: #444;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
-#times li:hover {
-  background-color: #333;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  body {
-    height: auto; /* Allow scrolling if needed on smaller screens */
-  }
-
-  .container {
-    padding: 10px;
-  }
-
-  #scramble {
-    font-size: 1rem; /* Smaller scramble text for mobile */
-  }
-
-  #timer {
-    font-size: 3rem; /* Adjust timer size for mobile */
-  }
-
-  .times-list {
-    max-height: 40%; /* Reduce times list height on mobile */
-  }
-
-  #times li {
-    font-size: 0.9rem; /* Slightly smaller text for times list */
-  }
+.sections-actions button:hover {
+  background-color: #555;
 }
