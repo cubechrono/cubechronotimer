@@ -2,12 +2,14 @@ let timerElement = document.getElementById("timer");
 let timesList = document.getElementById("times");
 let scrambleElement = document.getElementById("scramble");
 
-let startTime, elapsedTime = 0;
+let startTime = null;
+let elapsedTime = 0;
 let running = false;
-let times = JSON.parse(localStorage.getItem("times")) || []; // Load times from localStorage
-let startDelay = 0; // To handle delay before starting the timer
+let holdStartTime = null;
+let isReady = false;
+let times = JSON.parse(localStorage.getItem("times")) || [];
+let timerInterval = null;
 
-// Generate a random scramble
 function generateScramble() {
   const moves = ["R", "L", "U", "D", "F", "B"];
   const suffixes = ["", "'", "2"];
@@ -26,35 +28,26 @@ function generateScramble() {
   return scramble.join(" ");
 }
 
-// Display the scramble
 function displayScramble() {
   scrambleElement.textContent = generateScramble();
 }
 
-// Start or stop the timer
-function startStopTimer() {
-  if (running) {
-    // Stop the timer
-    running = false;
+function startTimer() {
+  startTime = Date.now();
+  elapsedTime = 0; // Reset elapsed time when starting
+  timerInterval = setInterval(() => {
     elapsedTime = Date.now() - startTime;
-    const time = (elapsedTime / 1000).toFixed(2);
-    saveTime(time);
-    displayScramble();
-    timerElement.textContent = time; // Show the final time on the timer
-    timerElement.style.color = "white"; // Reset the timer color after stopping
-  } else {
-    // Start the timer
-    running = true;
-    startTime = Date.now() - startDelay; // Set the time to the delay, to avoid offsetting the start
-    timerElement.textContent = "0.00"; // Reset the timer to 0
-    timerElement.style.color = "green"; // Turn the timer green when it starts
-
-    // Update the timer every 10ms to reflect elapsed time
-    requestAnimationFrame(updateTimer);
-  }
+    timerElement.textContent = (elapsedTime / 1000).toFixed(2);
+  }, 10); // Update every 10ms for smoother display
 }
 
-// Save the time to localStorage and render the times list
+function stopTimer() {
+  clearInterval(timerInterval);
+  elapsedTime = Date.now() - startTime;
+  const time = (elapsedTime / 1000).toFixed(2);
+  saveTime(time);
+}
+
 function saveTime(time) {
   const scramble = scrambleElement.textContent;
   const solve = { time, scramble, status: "" };
@@ -63,7 +56,6 @@ function saveTime(time) {
   renderTimes();
 }
 
-// Render the times list
 function renderTimes() {
   timesList.innerHTML = "";
   times.forEach((solve, index) => {
@@ -74,7 +66,6 @@ function renderTimes() {
   });
 }
 
-// Edit the time (add +2, DNF, delete)
 function editTime(index) {
   const solve = times[index];
   const action = prompt(
@@ -94,37 +85,58 @@ function editTime(index) {
   renderTimes();
 }
 
-// Handle the space key to start or stop the timer
-let spacePressed = false;
-let startTimeout;
+function resetTimerAppearance() {
+  timerElement.style.color = "#ffffff"; // Reset to default color
+}
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
-    if (!spacePressed) {
-      spacePressed = true;
-      startTimeout = setTimeout(() => {
-        startStopTimer();
-        spacePressed = false;
-      }, 300); // Wait 0.3 seconds before starting
+
+    if (!running && !holdStartTime) {
+      holdStartTime = Date.now();
     }
   }
 });
 
 document.addEventListener("keyup", (e) => {
   if (e.code === "Space") {
-    clearTimeout(startTimeout); // Cancel the start if the space key is released too early
+    e.preventDefault();
+
+    if (!running) {
+      const holdDuration = Date.now() - holdStartTime;
+      holdStartTime = null;
+
+      if (isReady && holdDuration >= 300) {
+        // Start the timer
+        running = true;
+        isReady = false;
+        timerElement.textContent = "0.00"; // Reset only when starting
+        startTimer();
+        timerElement.style.color = "#ffffff"; // Reset color
+      } else {
+        resetTimerAppearance();
+      }
+    } else {
+      // Stop the timer
+      running = false;
+      stopTimer();
+      displayScramble();
+    }
   }
 });
 
-// Update the timer every frame when running
-function updateTimer() {
-  if (running) {
-    elapsedTime = Date.now() - startTime;
-    timerElement.textContent = (elapsedTime / 1000).toFixed(2);
-    requestAnimationFrame(updateTimer); // Keep updating the timer
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    const holdDuration = Date.now() - holdStartTime;
+
+    if (!running && holdDuration >= 300) {
+      // Ready to start
+      isReady = true;
+      timerElement.style.color = "#00ff00"; // Green color when ready
+    }
   }
-}
+});
 
 // Initialize
 displayScramble();
