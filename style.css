@@ -1,9 +1,14 @@
-/* General Styles */
-body {
+/* Resetting some default styles */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: Arial, sans-serif;
   background-color: #282c34;
-  color: #ffffff;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,52 +16,48 @@ body {
   overflow: hidden;
 }
 
+/* Main container for timer and times list */
 .container {
   display: flex;
+  width: 90%;
+  max-width: 1200px;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 600px;
-  height: 100%;
-  padding: 10px;
-  box-sizing: border-box;
 }
 
-/* Main Section */
+/* Main section with timer and scramble */
 .main {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  margin-bottom: 20px;
 }
 
 #scramble {
-  font-size: 1.2rem;
-  margin-bottom: 15px;
-  padding: 0 10px;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
   text-align: center;
-  word-wrap: break-word; /* Ensure scramble text wraps on small screens */
 }
 
 #timer {
-  font-size: 4rem;
+  font-size: 6rem;
   margin: 20px 0;
-  color: #ffffff;
-  transition: color 0.3s ease; /* Smooth transition for color change */
+  text-align: center;
+  color: white;
+  transition: color 0.3s;
 }
 
-/* Times List Section */
+/* Times List */
 .times-list {
   width: 100%;
-  max-height: 50%;
+  max-width: 400px;
   background-color: #1e1e1e;
-  overflow-y: auto;
-  margin-top: 10px;
   border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  padding: 10px;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 #times {
@@ -76,29 +77,39 @@ body {
   background-color: #333;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  body {
-    height: auto; /* Allow scrolling if needed on smaller screens */
-  }
+/* Button Style (optional for any future buttons you might add) */
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+  border-radius: 5px;
+}
 
-  .container {
-    padding: 10px;
+button:hover {
+  background-color: #45a049;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  #timer {
+    font-size: 4rem;
   }
 
   #scramble {
-    font-size: 1rem; /* Smaller scramble text for mobile */
-  }
-
-  #timer {
-    font-size: 3rem; /* Adjust timer size for mobile */
+    font-size: 1rem;
   }
 
   .times-list {
-    max-height: 40%; /* Reduce times list height on mobile */
+    width: 100%;
+    max-width: 300px;
+    margin-top: 15px;
   }
 
   #times li {
-    font-size: 0.9rem; /* Slightly smaller text for times list */
+    font-size: 0.9rem;
   }
 }
