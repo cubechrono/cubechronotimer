@@ -145,7 +145,7 @@ document.addEventListener("keyup", (e) => {
       const holdDuration = Date.now() - holdStartTime;
       holdStartTime = null;
 
-      if (isReady && holdDuration >= 300) {
+      if (isReady && holdDuration >= 150) {
         // Start the timer
         running = true;
         isReady = false;
