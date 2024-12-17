@@ -8,26 +8,27 @@
 </head>
 <body>
   <div class="container">
-    <!-- Timer and Scramble Section -->
+    <!-- Main Timer and Scramble -->
     <div class="main">
       <h1 id="scramble"></h1>
       <div id="timer">0.00</div>
+      <div class="timer-controls">
+        <button id="start-stop" class="button">Start</button>
+      </div>
     </div>
 
-    <!-- Statistics Section -->
-    <div id="statistics">
-      <p id="bestSingle">Best Single: --</p>
-      <p id="bestAo5">Best Ao5: --</p>
-      <p id="bestAo12">Best Ao12: --</p>
-      <p id="bestAo100">Best Ao100: --</p>
-    </div>
-
-    <!-- Times List Section -->
+    <!-- Times List -->
     <div class="times-list">
-      <ul id="times"></ul>
+      <h2>Session List</h2>
+      <input type="text" id="session-name" placeholder="Session name" />
+      <button id="add-session" class="button">Add Session</button>
+      <ul id="sessions"></ul>
+      <h3>Best Times</h3>
+      <div id="best-single">Best Single: 0.00</div>
+      <div id="best-ao5">Best AO5: 0.00</div>
+      <div id="best-ao12">Best AO12: 0.00</div>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
