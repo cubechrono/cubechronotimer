@@ -55,11 +55,14 @@ body {
   background-color: #555;
 }
 
-.times-list {
+.times-list,
+.sessions-list {
   width: 250px;
   background-color: #1e1e1e;
   padding: 20px;
   border-radius: 10px;
+  height: 300px;  /* Fixed height for scrolling */
+  overflow-y: auto;  /* Enables vertical scrolling */
 }
 
 #sessions, #times {
@@ -90,4 +93,3 @@ body {
   margin-top: 20px;
   font-size: 1.2rem;
 }
-
