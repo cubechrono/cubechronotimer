@@ -1,8 +1,9 @@
 let timerElement = document.getElementById("timer");
 let startStopButton = document.getElementById("start-stop");
-let timesList = document.getElementById("sessions");
+let timesList = document.getElementById("times");
 let scrambleElement = document.getElementById("scramble");
 let sessionNameInput = document.getElementById("session-name");
+let sessionsList = document.getElementById("sessions");
 
 let startTime = null;
 let elapsedTime = 0;
@@ -71,6 +72,20 @@ function renderTimes() {
     li.textContent = `${solve.time} ${solve.status}`;
     li.addEventListener("click", () => editTime(index));
     timesList.appendChild(li);
+  });
+}
+
+function renderSessions() {
+  sessionsList.innerHTML = "";
+  sessions.forEach(session => {
+    const li = document.createElement("li");
+    li.textContent = session;
+    li.addEventListener("click", () => {
+      times = [];  // Clear previous session's times when clicking a new session
+      localStorage.setItem("times", JSON.stringify(times));
+      renderTimes();
+    });
+    sessionsList.appendChild(li);
   });
 }
 
@@ -176,21 +191,6 @@ document.getElementById("add-session").addEventListener("click", () => {
     sessionNameInput.value = "";
   }
 });
-
-function renderSessions() {
-  const sessionsList = document.getElementById("sessions");
-  sessionsList.innerHTML = "";
-  sessions.forEach(session => {
-    const li = document.createElement("li");
-    li.textContent = session;
-    li.addEventListener("click", () => {
-      times = [];  // Clear previous session's times when clicking a new session
-      localStorage.setItem("times", JSON.stringify(times));
-      renderTimes();
-    });
-    sessionsList.appendChild(li);
-  });
-}
 
 renderSessions();
 renderTimes();
