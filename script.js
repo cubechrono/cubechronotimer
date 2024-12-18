@@ -87,47 +87,57 @@ function editTime(index) {
   renderTimes();
 }
 
-function handleSpacebar(e) {
+// Handle Spacebar for starting and stopping the timer on PC
+document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
 
-    if (!running) {
+    if (!running && !holdStartTime) {
+      // Start the timer if it's not running
       holdStartTime = Date.now();
       isReady = true;
       timerElement.style.color = "#00ff00"; // Green color when ready
+    }
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  if (e.code === "Space") {
+    e.preventDefault();
+
+    if (isReady && !running) {
+      // Start the timer when the spacebar is released after holding
+      running = true;
+      startTimer();
+      timerElement.style.color = "#ffffff"; // Reset color when starting
     } else {
-      // Stop the timer when space is released
+      // Stop the timer when spacebar is released
       running = false;
       stopTimer();
       displayScramble();
-      timerElement.style.color = "#ffffff"; // Reset color when timer stops
     }
   }
-}
+});
 
-function handleButtonHold(e) {
+// For Mobile - Button interaction
+startStopButton.addEventListener("touchstart", (e) => {
   if (!running && !holdStartTime) {
     holdStartTime = Date.now();
     isReady = true;
     timerElement.style.color = "#00ff00"; // Green color when ready
   }
+});
 
-  if (e.type === "touchend" && isReady) {
+startStopButton.addEventListener("touchend", (e) => {
+  if (isReady) {
     // Start the timer when touch ends after holding
     running = true;
     startTimer();
     startStopButton.textContent = "Stop"; // Change button text
     timerElement.style.color = "#ffffff"; // Reset color when starting
   }
-}
-
-document.addEventListener("keydown", handleSpacebar);
-
-// For Mobile - Button interaction
-startStopButton.addEventListener("touchstart", handleButtonHold);
-startStopButton.addEventListener("touchend", handleButtonHold);
+});
 
 // Initialize
 displayScramble();
 renderTimes();
-
