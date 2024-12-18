@@ -3,35 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cube Timer</title>
+  <title>CubeChrono</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>Cube Timer</h1>
-      <div class="sessions-controls">
-        <input type="text" id="new-session-name" placeholder="New session name">
-        <button id="add-session">Add Session</button>
+    <div class="main">
+      <h1 id="scramble"></h1>
+      <div id="timer">0.00</div>
+      <button id="start-stop-btn">Start/Stop</button>
+    </div>
+
+    <div class="lists">
+      <div class="sessions-list">
+        <h2>Sessions</h2>
+        <ul id="sessions"></ul>
+        <button id="add-session-btn">Add Session</button>
+      </div>
+      <div class="times-list">
+        <h2>Times</h2>
+        <ul id="times"></ul>
       </div>
     </div>
-    <div class="sessions-list" id="sessions"></div>
-
-    <div class="main">
-      <h2 id="scramble"></h2>
-      <div id="timer">0.00</div>
-    </div>
-
-    <div class="stats">
-      <div>Best Single: <span id="best-single">0.00</span></div>
-      <div>Best Ao5: <span id="best-ao5">0.00</span></div>
-      <div>Best Ao12: <span id="best-ao12">0.00</span></div>
-    </div>
-
-    <div class="times-list">
-      <ul id="times"></ul>
-    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
