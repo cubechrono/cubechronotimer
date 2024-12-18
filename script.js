@@ -1,23 +1,22 @@
-let timerElement = document.getElementById("timer");
-let startStopButton = document.getElementById("start-stop");
-let timesList = document.getElementById("times");
-let scrambleElement = document.getElementById("scramble");
-let sessionNameInput = document.getElementById("session-name");
-let sessionsList = document.getElementById("sessions");
+const scrambleElement = document.getElementById("scramble");
+const timerElement = document.getElementById("timer");
+const timesList = document.getElementById("times");
+const sessionsElement = document.getElementById("sessions");
+const bestSingleElement = document.getElementById("best-single");
+const bestAo5Element = document.getElementById("best-ao5");
+const bestAo12Element = document.getElementById("best-ao12");
+
+let sessions = JSON.parse(localStorage.getItem("sessions")) || { "Default": [] };
+let currentSession = "Default";
 
 let startTime = null;
 let elapsedTime = 0;
 let running = false;
+let timerInterval = null;
 let holdStartTime = null;
 let isReady = false;
-let times = JSON.parse(localStorage.getItem("times")) || [];
-let sessions = JSON.parse(localStorage.getItem("sessions")) || [];
-let timerInterval = null;
 
-let bestSingle = 0;
-let bestAO5 = 0;
-let bestAO12 = 0;
-
+// Generate and display scramble
 function generateScramble() {
   const moves = ["R", "L", "U", "D", "F", "B"];
   const suffixes = ["", "'", "2"];
@@ -40,105 +39,95 @@ function displayScramble() {
   scrambleElement.textContent = generateScramble();
 }
 
+// Timer start/stop
 function startTimer() {
   startTime = Date.now();
   elapsedTime = 0;
   timerInterval = setInterval(() => {
     elapsedTime = Date.now() - startTime;
     timerElement.textContent = (elapsedTime / 1000).toFixed(2);
-  }, 10); // Update every 10ms for smoother display
+  }, 10);
 }
 
 function stopTimer() {
   clearInterval(timerInterval);
-  elapsedTime = Date.now() - startTime;
   const time = (elapsedTime / 1000).toFixed(2);
   saveTime(time);
-  updateBestTimes(time);
 }
 
+// Save and render times
 function saveTime(time) {
   const scramble = scrambleElement.textContent;
-  const solve = { time, scramble, status: "" };
-  times.push(solve);
-  localStorage.setItem("times", JSON.stringify(times));
+  const solve = { time, scramble };
+  sessions[currentSession].push(solve);
+  localStorage.setItem("sessions", JSON.stringify(sessions));
   renderTimes();
 }
 
 function renderTimes() {
   timesList.innerHTML = "";
-  times.forEach((solve, index) => {
+  const times = sessions[currentSession] || [];
+  times.forEach((solve) => {
     const li = document.createElement("li");
-    li.textContent = `${solve.time} ${solve.status}`;
-    li.addEventListener("click", () => editTime(index));
+    li.textContent = `${solve.time} - ${solve.scramble}`;
     timesList.appendChild(li);
   });
+  updateStats();
 }
 
+// Sessions
 function renderSessions() {
-  sessionsList.innerHTML = "";
-  sessions.forEach(session => {
-    const li = document.createElement("li");
-    li.textContent = session;
-    li.addEventListener("click", () => {
-      times = [];  // Clear previous session's times when clicking a new session
-      localStorage.setItem("times", JSON.stringify(times));
-      renderTimes();
-    });
-    sessionsList.appendChild(li);
-  });
+  sessionsElement.innerHTML = "";
+  for (const session in sessions) {
+    const button = document.createElement("button");
+    button.textContent = session;
+    button.addEventListener("click", () => switchSession(session));
+    sessionsElement.appendChild(button);
+  }
 }
 
-function editTime(index) {
-  const solve = times[index];
-  const action = prompt(
-    `Time: ${solve.time}\nScramble: ${solve.scramble}\nStatus: ${solve.status || "None"}\n\nEnter:\n+2 to add 2 seconds\nDNF to mark as Did Not Finish\ndelete to remove`
-  );
-
-  if (action === "+2") {
-    solve.time = (parseFloat(solve.time) + 2).toFixed(2);
-    solve.status = "+2";
-  } else if (action === "DNF") {
-    solve.status = "DNF";
-  } else if (action === "delete") {
-    times.splice(index, 1);
-  }
-
-  localStorage.setItem("times", JSON.stringify(times));
+function switchSession(session) {
+  currentSession = session;
   renderTimes();
 }
 
-function resetTimerAppearance() {
-  timerElement.style.color = "#ffffff"; // Reset to default color
+// Statistics
+function updateStats() {
+  const times = sessions[currentSession].map((solve) => parseFloat(solve.time));
+  if (times.length > 0) {
+    bestSingleElement.textContent = Math.min(...times).toFixed(2);
+  }
+
+  function calculateAo(times, n) {
+    if (times.length < n) return "N/A";
+    const relevantTimes = times.slice(-n).sort((a, b) => a - b);
+    relevantTimes.pop();
+    relevantTimes.shift();
+    const avg = relevantTimes.reduce((a, b) => a + b, 0) / (n - 2);
+    return avg.toFixed(2);
+  }
+
+  bestAo5Element.textContent = calculateAo(times, 5);
+  bestAo12Element.textContent = calculateAo(times, 12);
 }
 
-function updateBestTimes(time) {
-  if (bestSingle === 0 || parseFloat(time) < bestSingle) {
-    bestSingle = parseFloat(time);
-    document.getElementById("best-single").textContent = `Best Single: ${bestSingle.toFixed(2)}`;
+// Event listeners
+document.getElementById("add-session").addEventListener("click", () => {
+  const newSessionName = document.getElementById("new-session-name").value.trim();
+  if (newSessionName && !sessions[newSessionName]) {
+    sessions[newSessionName] = [];
+    localStorage.setItem("sessions", JSON.stringify(sessions));
+    renderSessions();
   }
-
-  if (times.length >= 5) {
-    let ao5Times = times.slice(-5).map(t => parseFloat(t.time));
-    let ao5Average = ao5Times.reduce((a, b) => a + b, 0) / ao5Times.length;
-    bestAO5 = ao5Average;
-    document.getElementById("best-ao5").textContent = `Best AO5: ${bestAO5.toFixed(2)}`;
-  }
-
-  if (times.length >= 12) {
-    let ao12Times = times.slice(-12).map(t => parseFloat(t.time));
-    let ao12Average = ao12Times.reduce((a, b) => a + b, 0) / ao12Times.length;
-    bestAO12 = ao12Average;
-    document.getElementById("best-ao12").textContent = `Best AO12: ${bestAO12.toFixed(2)}`;
-  }
-}
+});
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
-
     if (!running && !holdStartTime) {
       holdStartTime = Date.now();
+      isReady = true; // Mark ready when key is pressed
+      timerElement.style.color = "#00ff00"; // Green color
     }
   }
 });
@@ -146,52 +135,28 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("keyup", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
+    const holdDuration = Date.now() - holdStartTime;
+    holdStartTime = null;
 
-    if (!running) {
-      const holdDuration = Date.now() - holdStartTime;
-      holdStartTime = null;
-
-      if (isReady && holdDuration >= 150) {
-        // Start the timer
+    if (isReady && holdDuration >= 150) {
+      if (!running) {
         running = true;
-        isReady = false;
-        timerElement.textContent = "0.00"; // Reset only when starting
+        timerElement.textContent = "0.00";
         startTimer();
         timerElement.style.color = "#ffffff"; // Reset color
       } else {
-        resetTimerAppearance();
+        running = false;
+        stopTimer();
+        displayScramble();
       }
     } else {
-      // Stop the timer
-      running = false;
-      stopTimer();
-      displayScramble();
+      isReady = false;
+      timerElement.style.color = "#ffffff"; // Reset color
     }
   }
 });
 
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    const holdDuration = Date.now() - holdStartTime;
-
-    if (!running && holdDuration >= 150) {
-      // Ready to start
-      isReady = true;
-      timerElement.style.color = "#00ff00"; // Green color when ready
-    }
-  }
-});
-
-document.getElementById("add-session").addEventListener("click", () => {
-  const sessionName = sessionNameInput.value.trim();
-  if (sessionName && !sessions.includes(sessionName)) {
-    sessions.push(sessionName);
-    localStorage.setItem("sessions", JSON.stringify(sessions));
-    renderSessions();
-    sessionNameInput.value = "";
-  }
-});
-
+// Initialize
+displayScramble();
 renderSessions();
 renderTimes();
-displayScramble();
