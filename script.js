@@ -106,11 +106,15 @@ document.addEventListener("keyup", (e) => {
     e.preventDefault();
 
     if (isReady && !running) {
-      // Start the timer when the spacebar is released after holding
-      running = true;
-      startTimer();
-      timerElement.style.color = "#ffffff"; // Reset color when starting
-    } else {
+      // Start the timer when the spacebar is released after holding for 0.15 seconds
+      const holdDuration = Date.now() - holdStartTime;
+      if (holdDuration >= 150) {
+        running = true;
+        startTimer();
+        timerElement.style.color = "#ffffff"; // Reset color when starting
+      }
+      holdStartTime = null;
+    } else if (running) {
       // Stop the timer when spacebar is released
       running = false;
       stopTimer();
@@ -130,11 +134,20 @@ startStopButton.addEventListener("touchstart", (e) => {
 
 startStopButton.addEventListener("touchend", (e) => {
   if (isReady) {
-    // Start the timer when touch ends after holding
-    running = true;
-    startTimer();
-    startStopButton.textContent = "Stop"; // Change button text
-    timerElement.style.color = "#ffffff"; // Reset color when starting
+    // Start the timer when touch ends after holding for 0.15 seconds
+    const holdDuration = Date.now() - holdStartTime;
+    if (holdDuration >= 150) {
+      running = true;
+      startTimer();
+      startStopButton.textContent = "Stop"; // Change button text
+      timerElement.style.color = "#ffffff"; // Reset color when starting
+    }
+  } else if (running) {
+    // Stop the timer when touch is released
+    running = false;
+    stopTimer();
+    displayScramble();
+    startStopButton.textContent = "Start"; // Reset button text
   }
 });
 
