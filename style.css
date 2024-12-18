@@ -1,109 +1,100 @@
-/* General Styles */
+/* General reset and styles */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #121212;
-  color: #ffffff;
   margin: 0;
-  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  flex-direction: column;
 }
 
 .container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  text-align: center;
-}
-
-.header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
-}
-
-.sessions-controls input {
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #333;
-}
-
-.sessions-controls button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.sessions-controls button:hover {
-  background-color: #0056b3;
-}
-
-.sessions-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 10px 0;
-  height: 100px;
-  overflow-y: auto;
-  background-color: #1e1e1e;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.sessions-list button {
-  margin: 5px;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #ff5722;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.sessions-list button:hover {
-  background-color: #e64a19;
+  width: 100%;
+  padding: 20px;
 }
 
 .main {
-  margin: 20px 0;
+  text-align: center;
 }
 
 #timer {
-  font-size: 48px;
-  font-weight: bold;
-  margin: 20px 0;
+  font-size: 3rem;
+  margin-top: 20px;
 }
 
-.stats {
+button {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #1e1e1e;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #333;
+}
+
+.lists {
   display: flex;
   justify-content: space-around;
-  margin: 20px 0;
+  width: 100%;
+  margin-top: 30px;
+  flex-wrap: wrap;
 }
 
-.stats div {
-  font-size: 18px;
-}
-
-.times-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 10px 0;
-  height: 200px;
-  overflow-y: auto;
+.sessions-list, .times-list {
+  width: 40%;
   background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.sessions-list ul, .times-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sessions-list li, .times-list li {
   padding: 10px;
-  border-radius: 5px;
+  border-bottom: 1px solid #444;
+  cursor: pointer;
 }
 
-.times-list li {
-  padding: 5px;
-  margin: 5px 0;
-  border-radius: 5px;
+.sessions-list li:hover, .times-list li:hover {
   background-color: #333;
-  color: white;
 }
 
-.times-list li:hover {
-  background-color: #444;
+/* Mobile styles */
+@media (max-width: 768px) {
+  .lists {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sessions-list, .times-list {
+    width: 80%;
+    margin-bottom: 20px;
+  }
+
+  #timer {
+    font-size: 2.5rem;
+  }
+
+  button {
+    width: 100%;
+  }
 }
