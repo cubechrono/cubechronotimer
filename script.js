@@ -97,6 +97,16 @@ function renderSessions() {
     if (session !== "times") {
       const li = document.createElement("li");
       li.textContent = session;
+
+      // Add delete button for each session
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Delete";
+      deleteButton.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent the session click event from triggering
+        deleteSession(session);
+      });
+
+      li.appendChild(deleteButton);
       li.addEventListener("click", () => loadSession(session));
       sessionList.appendChild(li);
     }
@@ -115,6 +125,19 @@ function addSession() {
     localStorage.setItem(sessionName, JSON.stringify([]));
     renderSessions();
     sessionNameInput.value = ""; // Clear input after adding session
+  }
+}
+
+function deleteSession(session) {
+  if (confirm(`Are you sure you want to delete the session "${session}"?`)) {
+    localStorage.removeItem(session);
+    renderSessions();
+    if (session === currentSession) {
+      // Load the default session if the current session is deleted
+      currentSession = "Default";
+      times = JSON.parse(localStorage.getItem(currentSession)) || [];
+      renderTimes();
+    }
   }
 }
 
