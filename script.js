@@ -2,17 +2,17 @@ let timerElement = document.getElementById("timer");
 let timesList = document.getElementById("times");
 let scrambleElement = document.getElementById("scramble");
 let startStopButton = document.getElementById("start-stop-btn");
-let addSessionButton = document.getElementById("add-session-btn");
-let sessionsList = document.getElementById("sessions");
 
 let startTime = null;
 let elapsedTime = 0;
 let running = false;
+let timerInterval = null;
 let holdStartTime = null;
 let isReady = false;
 let currentSession = "Default";
 let times = JSON.parse(localStorage.getItem(currentSession)) || [];
 
+// Generates a random scramble
 function generateScramble() {
   const moves = ["R", "L", "U", "D", "F", "B"];
   const suffixes = ["", "'", "2"];
@@ -37,7 +37,6 @@ function displayScramble() {
 
 function startTimer() {
   startTime = Date.now();
-  elapsedTime = 0;
   timerInterval = setInterval(() => {
     elapsedTime = Date.now() - startTime;
     timerElement.textContent = (elapsedTime / 1000).toFixed(2);
@@ -88,47 +87,47 @@ function editTime(index) {
   renderTimes();
 }
 
-function addSession() {
-  const sessionName = prompt("Enter session name:");
-  if (sessionName) {
-    currentSession = sessionName;
-    times = JSON.parse(localStorage.getItem(currentSession)) || [];
-    renderSessions();
-    renderTimes();
+function handleSpacebar(e) {
+  if (e.code === "Space") {
+    e.preventDefault();
+
+    if (!running) {
+      holdStartTime = Date.now();
+      isReady = true;
+      timerElement.style.color = "#00ff00"; // Green color when ready
+    } else {
+      // Stop the timer when space is released
+      running = false;
+      stopTimer();
+      displayScramble();
+      timerElement.style.color = "#ffffff"; // Reset color when timer stops
+    }
   }
 }
 
-function renderSessions() {
-  sessionsList.innerHTML = "";
-  const sessions = Object.keys(localStorage);
-  sessions.forEach(session => {
-    const li = document.createElement("li");
-    li.textContent = session;
-    li.addEventListener("click", () => loadSession(session));
-    sessionsList.appendChild(li);
-  });
-}
+function handleButtonHold(e) {
+  if (!running && !holdStartTime) {
+    holdStartTime = Date.now();
+    isReady = true;
+    timerElement.style.color = "#00ff00"; // Green color when ready
+  }
 
-function loadSession(sessionName) {
-  currentSession = sessionName;
-  times = JSON.parse(localStorage.getItem(currentSession)) || [];
-  renderTimes();
-}
-
-startStopButton.addEventListener("click", () => {
-  if (!running) {
+  if (e.type === "touchend" && isReady) {
+    // Start the timer when touch ends after holding
     running = true;
     startTimer();
-  } else {
-    running = false;
-    stopTimer();
-    displayScramble();
+    startStopButton.textContent = "Stop"; // Change button text
+    timerElement.style.color = "#ffffff"; // Reset color when starting
   }
-});
+}
 
-addSessionButton.addEventListener("click", addSession);
+document.addEventListener("keydown", handleSpacebar);
+
+// For Mobile - Button interaction
+startStopButton.addEventListener("touchstart", handleButtonHold);
+startStopButton.addEventListener("touchend", handleButtonHold);
 
 // Initialize
 displayScramble();
-renderSessions();
 renderTimes();
+
