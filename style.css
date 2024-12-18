@@ -1,100 +1,73 @@
-/* General reset and styles */
+/* General styles */
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #282c34;
+  background-color: #121212;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  overflow: hidden;
+  margin: 0;
   flex-direction: column;
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 20px;
-}
-
-.main {
   text-align: center;
 }
 
+.main {
+  margin-bottom: 30px;
+}
+
 #timer {
-  font-size: 3rem;
+  font-size: 2.5rem;
+  color: white;
   margin-top: 20px;
 }
 
 button {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #1e1e1e;
-  border: none;
+  background-color: #2d2d2d;
   color: white;
-  font-size: 1rem;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 20px;
 }
 
-button:hover {
-  background-color: #333;
+button:active {
+  background-color: #ff9800;
 }
 
-.lists {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  margin-top: 30px;
-  flex-wrap: wrap;
-}
-
-.sessions-list, .times-list {
-  width: 40%;
+/* List and sessions styles */
+.times-list, .sessions-list {
+  margin-top: 20px;
+  width: 250px;
+  height: 300px;
+  overflow-y: auto;
   background-color: #1e1e1e;
-  padding: 15px;
+  padding: 20px;
   border-radius: 10px;
   margin: 10px;
-  max-height: 300px;
-  overflow-y: auto;
 }
 
-.sessions-list ul, .times-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+li {
+  padding: 8px 0;
+  border-bottom: 1px solid #555;
 }
 
-.sessions-list li, .times-list li {
-  padding: 10px;
-  border-bottom: 1px solid #444;
-  cursor: pointer;
+li:last-child {
+  border-bottom: none;
 }
 
-.sessions-list li:hover, .times-list li:hover {
-  background-color: #333;
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-  .lists {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .sessions-list, .times-list {
-    width: 80%;
-    margin-bottom: 20px;
-  }
-
+/* For mobile */
+@media (max-width: 600px) {
   #timer {
-    font-size: 2.5rem;
+    font-size: 3rem;
   }
 
   button {
-    width: 100%;
+    font-size: 1.5rem;
   }
 }
