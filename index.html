@@ -3,36 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CubeChrono</title>
+  <title>Cube Timer</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <!-- Main Timer and Scramble -->
-    <div class="main">
-      <h1 id="scramble"></h1>
-      <div id="timer">0.00</div>
-      <div class="timer-controls">
-        <button id="start-stop" class="button">Start</button>
+    <div class="header">
+      <h1>Cube Timer</h1>
+      <div class="sessions-controls">
+        <input type="text" id="new-session-name" placeholder="New session name">
+        <button id="add-session">Add Session</button>
       </div>
     </div>
+    <div class="sessions-list" id="sessions"></div>
 
-    <!-- Times List and Sessions -->
+    <div class="main">
+      <h2 id="scramble"></h2>
+      <div id="timer">0.00</div>
+    </div>
+
+    <div class="stats">
+      <div>Best Single: <span id="best-single">0.00</span></div>
+      <div>Best Ao5: <span id="best-ao5">0.00</span></div>
+      <div>Best Ao12: <span id="best-ao12">0.00</span></div>
+    </div>
+
     <div class="times-list">
-      <h2>Sessions</h2>
-      <input type="text" id="session-name" placeholder="Session name" />
-      <button id="add-session" class="button">Add Session</button>
-      <ul id="sessions"></ul>
-
-      <h3>Best Times</h3>
-      <div id="best-single">Best Single: 0.00</div>
-      <div id="best-ao5">Best AO5: 0.00</div>
-      <div id="best-ao12">Best AO12: 0.00</div>
-
-      <h3>Times List</h3>
       <ul id="times"></ul>
     </div>
   </div>
   <script src="script.js"></script>
 </body>
 </html>
+
