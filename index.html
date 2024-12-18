@@ -12,17 +12,21 @@
     <div class="main">
       <h1 id="scramble"></h1>
       <div id="timer">0.00</div>
-      <button id="start-stop-btn">Start</button> <!-- For Mobile -->
+      <button id="start-stop-btn">Start</button>
     </div>
 
     <!-- Times List -->
     <div class="times-list">
+      <h3>Times</h3>
       <ul id="times"></ul>
     </div>
 
-    <!-- Session List -->
+    <!-- Sessions List -->
     <div class="sessions-list">
-      <ul id="sessions"></ul>
+      <h3>Sessions</h3>
+      <input type="text" id="session-name-input" placeholder="Enter session name" />
+      <button id="session-add-btn">Add Session</button>
+      <ul id="sessions-list"></ul>
     </div>
   </div>
   <script src="script.js"></script>
