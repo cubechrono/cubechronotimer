@@ -8,26 +8,23 @@
 </head>
 <body>
   <div class="container">
+    <!-- Main Timer and Scramble -->
     <div class="main">
       <h1 id="scramble"></h1>
       <div id="timer">0.00</div>
-      <button id="start-stop-btn">Start/Stop</button>
+      <button id="start-stop-btn">Start</button> <!-- For Mobile -->
     </div>
 
-    <div class="lists">
-      <div class="sessions-list">
-        <h2>Sessions</h2>
-        <ul id="sessions"></ul>
-        <button id="add-session-btn">Add Session</button>
-      </div>
-      <div class="times-list">
-        <h2>Times</h2>
-        <ul id="times"></ul>
-      </div>
+    <!-- Times List -->
+    <div class="times-list">
+      <ul id="times"></ul>
+    </div>
+
+    <!-- Session List -->
+    <div class="sessions-list">
+      <ul id="sessions"></ul>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
-
