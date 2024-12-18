@@ -124,19 +124,41 @@ document.addEventListener("keyup", (e) => {
 });
 
 // For Mobile - Button interaction
+let touchStartTime = null;
+let touchHeld = false;
+
 startStopButton.addEventListener("touchstart", (e) => {
   e.preventDefault(); // Prevent default mobile touch behavior
-  if (!running) {
-    // Start the timer if it's not running
-    running = true;
-    startTimer();
-    startStopButton.textContent = "Stop"; // Change button text to "Stop"
-  } else {
-    // Stop the timer if it's running
-    running = false;
-    stopTimer();
-    startStopButton.textContent = "Start"; // Change button text to "Start"
-    displayScramble();
+
+  if (!running && !touchHeld) {
+    touchStartTime = Date.now();
+    touchHeld = true; // Prevent multiple touchstart events in the same hold
+    timerElement.style.color = "#00ff00"; // Green color when ready
+  }
+});
+
+startStopButton.addEventListener("touchend", (e) => {
+  e.preventDefault(); // Prevent default mobile touch behavior
+
+  if (touchHeld) {
+    const holdDuration = Date.now() - touchStartTime;
+
+    if (holdDuration >= 150) {
+      // If button was held for 0.15 seconds, start the timer
+      if (!running) {
+        running = true;
+        startTimer();
+        startStopButton.textContent = "Stop"; // Change button text to "Stop"
+        timerElement.style.color = "#ffffff"; // Reset color
+      } else {
+        // If the timer is running, stop it
+        running = false;
+        stopTimer();
+        startStopButton.textContent = "Start"; // Change button text to "Start"
+        displayScramble();
+      }
+    }
+    touchHeld = false; // Reset the hold flag
   }
 });
 
