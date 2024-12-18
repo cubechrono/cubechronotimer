@@ -12,8 +12,8 @@ let running = false;
 let timerInterval = null;
 let holdStartTime = null;
 let isReady = false;
-let currentSession = "Default";
-let times = JSON.parse(localStorage.getItem(currentSession)) || [];
+let currentSession = "Default"; // Default session when no other session is selected
+let times = JSON.parse(localStorage.getItem(currentSession)) || []; // Load times from current session
 
 // Generates a random scramble
 function generateScramble() {
@@ -57,7 +57,7 @@ function saveTime(time) {
   const scramble = scrambleElement.textContent;
   const solve = { time, scramble, status: "" };
   times.push(solve);
-  localStorage.setItem(currentSession, JSON.stringify(times));
+  localStorage.setItem(currentSession, JSON.stringify(times)); // Save to current session
   renderTimes();
 }
 
