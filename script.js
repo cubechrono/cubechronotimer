@@ -141,10 +141,46 @@ function deleteSession(session) {
   }
 }
 
-// Event listeners for buttons and inputs
-sessionAddButton.addEventListener("click", addSession);
+// Mobile specific logic (Start/Stop via touch)
+let touchStartTime = null;
+let touchHeld = false;
 
-// Handle Spacebar for starting and stopping the timer on PC
+startStopButton.addEventListener("touchstart", (e) => {
+  e.preventDefault(); // Prevent default mobile touch behavior
+
+  if (!running && !touchHeld) {
+    touchStartTime = Date.now();
+    touchHeld = true; // Prevent multiple touchstart events in the same hold
+    timerElement.style.color = "#00ff00"; // Green color when ready
+  }
+});
+
+startStopButton.addEventListener("touchend", (e) => {
+  e.preventDefault(); // Prevent default mobile touch behavior
+
+  if (touchHeld) {
+    const holdDuration = Date.now() - touchStartTime;
+
+    if (holdDuration >= 150) {
+      // If button was held for 0.15 seconds, start or stop the timer
+      if (!running) {
+        running = true;
+        startTimer();
+        startStopButton.textContent = "Stop"; // Change button text to "Stop"
+        timerElement.style.color = "#ffffff"; // Reset color
+      } else {
+        // If the timer is running, stop it
+        running = false;
+        stopTimer();
+        startStopButton.textContent = "Start"; // Change button text to "Start"
+        displayScramble();
+      }
+    }
+    touchHeld = false; // Reset the hold flag
+  }
+});
+
+// Event listeners for Spacebar on PC for start/stop
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
@@ -177,45 +213,6 @@ document.addEventListener("keyup", (e) => {
       stopTimer();
       displayScramble();
     }
-  }
-});
-
-// For Mobile - Button interaction
-let touchStartTime = null;
-let touchHeld = false;
-
-startStopButton.addEventListener("touchstart", (e) => {
-  e.preventDefault(); // Prevent default mobile touch behavior
-
-  if (!running && !touchHeld) {
-    touchStartTime = Date.now();
-    touchHeld = true; // Prevent multiple touchstart events in the same hold
-    timerElement.style.color = "#00ff00"; // Green color when ready
-  }
-});
-
-startStopButton.addEventListener("touchend", (e) => {
-  e.preventDefault(); // Prevent default mobile touch behavior
-
-  if (touchHeld) {
-    const holdDuration = Date.now() - touchStartTime;
-
-    if (holdDuration >= 150) {
-      // If button was held for 0.15 seconds, start the timer
-      if (!running) {
-        running = true;
-        startTimer();
-        startStopButton.textContent = "Stop"; // Change button text to "Stop"
-        timerElement.style.color = "#ffffff"; // Reset color
-      } else {
-        // If the timer is running, stop it
-        running = false;
-        stopTimer();
-        startStopButton.textContent = "Start"; // Change button text to "Start"
-        displayScramble();
-      }
-    }
-    touchHeld = false; // Reset the hold flag
   }
 });
 
