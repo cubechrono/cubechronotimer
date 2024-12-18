@@ -125,29 +125,18 @@ document.addEventListener("keyup", (e) => {
 
 // For Mobile - Button interaction
 startStopButton.addEventListener("touchstart", (e) => {
-  if (!running && !holdStartTime) {
-    holdStartTime = Date.now();
-    isReady = true;
-    timerElement.style.color = "#00ff00"; // Green color when ready
-  }
-});
-
-startStopButton.addEventListener("touchend", (e) => {
-  if (isReady) {
-    // Start the timer when touch ends after holding for 0.15 seconds
-    const holdDuration = Date.now() - holdStartTime;
-    if (holdDuration >= 150) {
-      running = true;
-      startTimer();
-      startStopButton.textContent = "Stop"; // Change button text
-      timerElement.style.color = "#ffffff"; // Reset color when starting
-    }
-  } else if (running) {
-    // Stop the timer when touch is released
+  e.preventDefault(); // Prevent default mobile touch behavior
+  if (!running) {
+    // Start the timer if it's not running
+    running = true;
+    startTimer();
+    startStopButton.textContent = "Stop"; // Change button text to "Stop"
+  } else {
+    // Stop the timer if it's running
     running = false;
     stopTimer();
+    startStopButton.textContent = "Start"; // Change button text to "Start"
     displayScramble();
-    startStopButton.textContent = "Start"; // Reset button text
   }
 });
 
