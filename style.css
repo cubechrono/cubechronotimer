@@ -1,73 +1,75 @@
-/* General styles */
+/* Styling */
 body {
   font-family: Arial, sans-serif;
-  background-color: #121212;
-  color: white;
+  background-color: #282c34;
+  color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin: 0;
-  flex-direction: column;
 }
 
 .container {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1000px;
+  padding: 20px;
 }
 
 .main {
-  margin-bottom: 30px;
-}
-
-#timer {
-  font-size: 2.5rem;
-  color: white;
-  margin-top: 20px;
+  text-align: center;
 }
 
 button {
-  background-color: #2d2d2d;
-  color: white;
-  padding: 10px 20px;
-  font-size: 1.2rem;
+  background-color: #61dafb;
   border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
   cursor: pointer;
-  margin-top: 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
-button:active {
-  background-color: #ff9800;
+button:hover {
+  background-color: #4fa3d1;
 }
 
-/* List and sessions styles */
 .times-list, .sessions-list {
-  margin-top: 20px;
   width: 250px;
   height: 300px;
   overflow-y: auto;
   background-color: #1e1e1e;
   padding: 20px;
   border-radius: 10px;
-  margin: 10px;
+  margin-left: 20px;
+}
+
+h3 {
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
 }
 
 li {
-  padding: 8px 0;
-  border-bottom: 1px solid #555;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
 }
 
-li:last-child {
-  border-bottom: none;
-}
-
-/* For mobile */
-@media (max-width: 600px) {
-  #timer {
-    font-size: 3rem;
-  }
-
-  button {
-    font-size: 1.5rem;
-  }
+li:hover {
+  background-color: #333;
 }
