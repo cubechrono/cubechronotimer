@@ -2,6 +2,9 @@ let timerElement = document.getElementById("timer");
 let timesList = document.getElementById("times");
 let scrambleElement = document.getElementById("scramble");
 let startStopButton = document.getElementById("start-stop-btn");
+let sessionList = document.getElementById("sessions-list");
+let sessionNameInput = document.getElementById("session-name-input");
+let sessionAddButton = document.getElementById("session-add-btn");
 
 let startTime = null;
 let elapsedTime = 0;
@@ -87,6 +90,37 @@ function editTime(index) {
   renderTimes();
 }
 
+function renderSessions() {
+  sessionList.innerHTML = "";
+  const sessions = Object.keys(localStorage);
+  sessions.forEach((session) => {
+    if (session !== "times") {
+      const li = document.createElement("li");
+      li.textContent = session;
+      li.addEventListener("click", () => loadSession(session));
+      sessionList.appendChild(li);
+    }
+  });
+}
+
+function loadSession(session) {
+  currentSession = session;
+  times = JSON.parse(localStorage.getItem(currentSession)) || [];
+  renderTimes();
+}
+
+function addSession() {
+  const sessionName = sessionNameInput.value.trim();
+  if (sessionName && !localStorage.getItem(sessionName)) {
+    localStorage.setItem(sessionName, JSON.stringify([]));
+    renderSessions();
+    sessionNameInput.value = ""; // Clear input after adding session
+  }
+}
+
+// Event listeners for buttons and inputs
+sessionAddButton.addEventListener("click", addSession);
+
 // Handle Spacebar for starting and stopping the timer on PC
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
@@ -164,4 +198,5 @@ startStopButton.addEventListener("touchend", (e) => {
 
 // Initialize
 displayScramble();
+renderSessions();
 renderTimes();
