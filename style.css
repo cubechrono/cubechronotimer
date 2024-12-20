@@ -1,3 +1,4 @@
+/* General styles for better layout */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -6,19 +7,20 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .container {
-  padding: 20px;
-  text-align: center;
-}
-
-.header h1 {
-  margin: 0;
-  padding: 20px 0;
+  width: 90%;
+  max-width: 600px;
 }
 
 .timer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 20px 0;
 }
 
@@ -29,15 +31,20 @@ body {
   padding: 20px;
   border-radius: 10px;
   display: inline-block;
+  width: 100%;
+  text-align: center;
 }
 
 #scramble {
   margin-top: 10px;
   font-size: 1.5rem;
+  word-wrap: break-word;
+  text-align: center;
 }
 
 .sessions-container {
-  margin-top: 20px;
+  margin: 20px 0;
+  text-align: center;
 }
 
 #add-session {
@@ -62,12 +69,12 @@ body {
 
 .sessions-container li {
   margin: 5px 0;
-  padding: 5px;
+  padding: 10px;
   background-color: #333;
-  cursor: pointer;
-  color: #fff;
+  border-radius: 5px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .sessions-container li.active {
@@ -100,8 +107,9 @@ body {
 
 #times li {
   margin: 5px 0;
-  padding: 5px;
+  padding: 10px;
   background-color: #333;
   border-radius: 5px;
 }
+
 
