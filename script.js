@@ -140,10 +140,6 @@ function renderSessions() {
 
 document.getElementById("add-session").addEventListener("click", addSession);
 
-function resetTimerAppearance() {
-  timerElement.style.color = "#ffffff";
-}
-
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
@@ -166,24 +162,11 @@ document.addEventListener("keyup", (e) => {
         isReady = false;
         timerElement.textContent = "0.00";
         startTimer();
-        timerElement.style.color = "#ffffff";
-      } else {
-        resetTimerAppearance();
       }
     } else {
       running = false;
       stopTimer();
       displayScramble();
-    }
-  }
-});
-
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    const holdDuration = Date.now() - holdStartTime;
-    if (!running && holdDuration >= 150) {
-      isReady = true;
-      timerElement.style.color = "#00ff00";
     }
   }
 });
