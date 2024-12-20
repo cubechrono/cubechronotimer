@@ -1,9 +1,53 @@
-.sessions-container {
-  margin: 10px;
-  padding: 10px;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  padding: 20px;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+  padding: 20px 0;
+}
+
+.timer-container {
+  margin: 20px 0;
+}
+
+#timer {
+  font-size: 4rem;
+  color: #ffffff;
   background-color: #1e1e1e;
+  padding: 20px;
   border-radius: 10px;
-  width: 300px;
+  display: inline-block;
+}
+
+#scramble {
+  margin-top: 10px;
+  font-size: 1.5rem;
+}
+
+.sessions-container {
+  margin-top: 20px;
+}
+
+#add-session {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .sessions-container ul {
@@ -11,17 +55,19 @@
   padding: 0;
   max-height: 150px;
   overflow-y: auto;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .sessions-container li {
-  display: flex;
-  justify-content: space-between;
   margin: 5px 0;
   padding: 5px;
   background-color: #333;
-  color: #fff;
   cursor: pointer;
-  border-radius: 5px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
 }
 
 .sessions-container li.active {
@@ -30,17 +76,32 @@
 }
 
 .sessions-container button {
-  background-color: #f00;
-  color: #fff;
+  background-color: red;
+  color: white;
   border: none;
-  padding: 5px;
+  padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.times-list {
+.times-list-container {
+  margin-top: 20px;
+}
+
+#times {
+  list-style: none;
+  padding: 0;
   max-height: 300px;
   overflow-y: auto;
   background-color: #1e1e1e;
   border-radius: 10px;
+  padding: 10px;
 }
+
+#times li {
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #333;
+  border-radius: 5px;
+}
+
